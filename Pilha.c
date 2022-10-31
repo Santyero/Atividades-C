@@ -1,84 +1,97 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
 
-struct t_no {
-    int info;
-    struct t_no *ant;
-};
-
-void inicia_lista(struct t_no *cabeca) {
-    cabeca=NULL;
-}
-
-void insere_final(struct t_no *cabeca, int valor) {
-    if (cabeca == NULL) {
-        cabeca = (t_no*) malloc(sizeof(t_no));
-        cabeca->info = valor;
-        cabeca->ant = NULL;
-    
-    } else {
-        t_no *novo = (t_no*) malloc(sizeof(t_no));
-        novo->info = valor;
-        novo->ant = cabeca;
-        cabeca = novo;
-    }
-}
-
-void mostra_todos(struct t_no *cabeca) {
-    if (cabeca == NULL) {
-        printf("Lista vazia!\n");
-    } else {
-        t_no *aux = cabeca;
-        while (aux != NULL) {
-            printf("%d  ", aux->info);
-            aux = aux->ant;
-        }
-        printf("\n");
-    }
-}
-
-apaga_final(struct t_no *cabeca) {
-    if (cabeca == NULL) {
-        printf("Lista vazia!\n");
-    } else {
-        t_no *aux = cabeca;
-        cabeca = cabeca->ant;
-        free(aux);
-    }
-}
-
-main(){
-    struct t_no *pilha;
-    inicia_lista(pilha);
-    char tecla;
+typedef struct no
+{
     int valor;
+    struct no *anterior;
+} No;
 
-    while (tecla!='S' && tecla!='s') {
-        printf("[I]ncluir [L]istar [D]eletar [S]air");
-        tecla=getch();
-        if (tecla=='i' || tecla=='I')
+typedef struct fila
+{
+    No *anterior;
+    No *atual;
+} Fila;
+
+Fila *criaFila() {
+    Fila *f = (Fila *) malloc(sizeof(Fila));
+    f->atual = NULL;
+    f->anterior = NULL;
+    return f;
+}
+
+void inserir(Fila *f, int valor)
+{
+    No *novo = (No *)malloc(sizeof(No));
+    novo->valor = valor;
+    novo->anterior = f->atual;
+    f->atual = novo;
+}
+
+void remover(Fila *f)
+{
+    No *aux = f->atual;
+    while(aux->anterior != f->anterior)
+    {
+        aux = aux->anterior;
+    }
+    f->anterior = aux;
+    free(aux->anterior);
+    aux->anterior = NULL;
+}
+
+
+void imprime(Fila *f)
+{
+    No *aux = f->atual;
+    if(aux == NULL) {
+        printf("lista vazia");
+    }
+    while (aux != NULL)
+    {
+        printf("%d ", aux->valor);
+        aux = aux->anterior;
+    }
+}
+
+void recebe_dados(Fila *f)
+{
+    int valor;
+    printf("Digite um valor: ");
+    scanf("%d", &valor);
+    inserir(f, valor);
+}
+
+int main()
+{
+    Fila *fila = criaFila();
+    char tecla;
+
+    while (tecla != 'S' && tecla != 's')
+    {
+        printf("\n[I]ncluir [L]istar [D]eletar [S]air\n");
+        scanf(" %c", &tecla);
+        if (tecla == 'i' || tecla == 'I')
         {
-            printf ("Valor:");
-            scanf ("%d",&valor);
-            insere_inicio (pilha, valor);
+            recebe_dados(fila);
         }
-        else if (tecla=='l' || tecla=='L')
+        else if (tecla == 'l' || tecla == 'L')
         {
-            mostra_todos(pilha);
+            imprime(fila);
         }
-        else if (tecla=='d' || tecla=='D')
+        else if (tecla == 'd' || tecla == 'D')
         {
-            apaga_final(pilha);
+            remover(fila);
         }
-        else if (tecla=='s' || tecla=='S')
+        else if (tecla == 's' || tecla == 'S')
         {
-            printf("Saindo");
+            printf("Saindo\n");
         }
         else
         {
-            printf("Opcao invalida");
+            printf("Opcao invalida\n");
         }
     }
+    return 0;
 }
