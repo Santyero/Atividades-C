@@ -32,15 +32,9 @@ void inserir(Fila *f, int valor)
 void remover(Fila *f)
 {
     No *aux = f->atual;
-    while(aux->anterior != f->anterior)
-    {
-        aux = aux->anterior;
-    }
-    f->anterior = aux;
-    free(aux->anterior);
-    aux->anterior = NULL;
+    f->atual = aux->anterior;
+    free(aux);
 }
-
 
 void imprime(Fila *f)
 {
